@@ -1,8 +1,8 @@
-\# Pedagogical OS – Technical Roadmap
+# Pedagogical OS – Technical Roadmap
 
 
 
-\## Month 1 – Data Model \& Consolidation Engine
+## Month 1 – Data Model \& Consolidation Engine
 
 1.1 Core database schema
 
@@ -17,22 +17,72 @@
 1.6 Unit testing framework
 
 
+## Month 2–3 – Aggregation & Teacher Dashboard
 
-\## Month 2-3 – Aggregation \& Teacher Dashboard
+### Objective
+Provide clear, hierarchical, and pedagogically meaningful visualization of student progress,
+built on top of the deterministic core implemented in Month 1.
 
-2.1 Indicator aggregation
+---
 
-2.2 Competency aggregation
+### 2.1 Indicator aggregation
+- Aggregate progress at Indicator level
+- Use current stage and consolidation score
+- Deterministic calculation only (no override)
 
-2.3 Nucleus aggregation
+---
 
-2.4 Internal level normalization
+### 2.2 Competency aggregation
+- Aggregate Indicators belonging to the same Competency
+- Use average of Indicator internal levels
+- No institutional conversion yet
 
-2.5 Dashboard base structure
+---
+
+### 2.3 Nucleus aggregation
+- Aggregate Competencies belonging to the same Nucleus
+- Hierarchical and deterministic
+- Read-only aggregation logic
+
+---
+
+### 2.4 Internal level normalization
+- Calculate normalized internal level (1–5)
+- Based on:
+  - micro-stage index
+  - consolidation impact
+- Internal use only (not yet institutional grading)
+
+---
+
+### 2.5 Preliminary institutional level conversion (no override)
+- Convert internal normalized level to institutional scale
+- Use institution-configured mapping
+- Override is NOT allowed in this phase
+- Conversion is informational only
+
+---
+
+### 2.6 Basic pedagogical alerts
+- Detect low consolidation cases
+- Trigger when consolidation < 0.60
+- Alerts are informational (no interventions yet)
+
+---
+
+### 2.7 Teacher dashboard base structure
+- Hierarchical visualization:
+  - Indicator → Competency → Nucleus
+- Minimum required elements:
+  - Current stage (X of Y)
+  - Consolidation bar
+  - Visual alert indicators
+- No advanced UX or AI features
 
 
 
-\## Month 4 – Override \& Institutional Mapping
+
+## Month 4 – Override \& Institutional Mapping
 
 4.1 Calculated vs final level
 
@@ -42,7 +92,7 @@
 
 
 
-\## Month 5 – Basic Intervention Engine
+## Month 5 – Basic Intervention Engine
 
 5.1 Trigger system
 
@@ -52,7 +102,7 @@
 
 
 
-\## Month 6 – AI Integration
+## Month 6 – AI Integration
 
 6.1 AI activity generation
 
@@ -62,7 +112,7 @@
 
 
 
-\## Month 7 – Stabilization \& Pilot
+## Month 7 – Stabilization \& Pilot
 
 7.1 Integration testing
 
