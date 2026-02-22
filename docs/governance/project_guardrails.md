@@ -406,4 +406,16 @@ Requires:
 5. Explicit justification
 ---
 
+## Roadmap Point Closure Rule
+
+A roadmap point is not considered closed until:
+
+- Code is committed
+- Documentation is updated
+- Roadmap status file is updated
+- Tests are green
+- Changes are pushed to GitHub
+
+No local-only completion is valid.
+
 # End of Document – Version 1.0
