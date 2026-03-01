@@ -419,3 +419,236 @@ A roadmap point is not considered closed until:
 No local-only completion is valid.
 
 # End of Document – Version 1.0
+
+---
+
+# ADDENDUM — GOVERNANCE EXPANSION (Version 2.0)
+
+The following sections expand the governance model without altering
+any prior rule defined in Version 1.0.
+
+All previously defined constraints remain fully active.
+
+---
+
+## 11. Dual Environment Development Governance
+
+Pedagogical OS formally adopts a dual-environment development model.
+
+This model is binding and enforceable.
+
+### 11.1 Strategic Design Environment
+
+The Strategic Design Environment is responsible for:
+
+- Architectural decisions
+- Domain modeling
+- Risk evaluation
+- Roadmap compliance validation
+- Specification drafting
+- Pedagogical core protection
+- Post-implementation validation
+
+This environment acts as:
+
+Architectural Authority.
+
+It must not delegate undefined or open-ended instructions.
+
+---
+
+### 11.2 Mechanical Implementation Environment (CODEX)
+
+The Mechanical Implementation Environment (e.g., CODEX or AI code generators):
+
+Is permitted only to:
+
+- Execute closed deterministic specifications
+- Generate boilerplate structures
+- Implement predefined DTOs
+- Write repository implementations under instruction
+- Produce tests explicitly defined
+
+Is strictly forbidden from:
+
+- Making architectural decisions
+- Altering protected pedagogical logic
+- Refactoring across layers
+- Introducing new abstractions
+- Modifying roadmap sequencing
+- Interpreting ambiguous goals
+
+Any violation is classified as structural governance breach.
+
+---
+
+## 12. CODEX SAFE SPECIFICATION PROTOCOL
+
+All AI-assisted implementation must follow a closed instruction format.
+
+A CODEX SAFE SPEC BLOCK must include:
+
+- Exact objective
+- Exact file paths to create
+- Exact file paths to modify
+- Explicit forbidden files
+- Explicit constraints
+- Required test names
+- Explicit pedagogical core protection statement
+
+Specifications must be deterministic and non-ambiguous.
+
+Open-ended instructions are prohibited.
+
+---
+
+## 13. Mandatory Four-Phase Workflow Enforcement
+
+Every roadmap point must follow this sequence:
+
+Phase 1 — Architectural Definition  
+Phase 2 — CODEX Safe Specification (if implementation required)  
+Phase 3 — Controlled Implementation (develop branch only)  
+Phase 4 — Architectural Validation and Governance Approval  
+
+Skipping any phase is prohibited.
+
+No roadmap point is considered complete unless all phases are executed.
+
+---
+
+## 14. AI-Assisted Development Safeguards
+
+AI tools may assist implementation but must not:
+
+- Redefine system architecture
+- Modify domain logic autonomously
+- Introduce structural patterns not defined
+- Remove guardrails
+- Circumvent roadmap sequencing
+
+All AI-generated output must be validated
+against this document before integration.
+
+Human governance prevails over AI convenience.
+
+---
+
+## 15. Architectural Breach Escalation Framework
+
+An architectural breach includes:
+
+- Layer contamination
+- Unauthorized modification of core logic
+- Determinism violation
+- Multi-tenant safety violation
+- Roadmap scope violation
+- Migration without structural validation
+- CODEX acting beyond specification
+
+Breach protocol:
+
+1. Immediate halt of development
+2. Formal breach documentation
+3. Root cause analysis
+4. Mandatory correction
+5. Regression testing
+6. Governance confirmation before continuation
+
+No breach may be silently tolerated.
+
+---
+
+## 16. Deterministic Implementation Requirements
+
+All implementation must satisfy:
+
+- Reproducibility
+- Explicit dependency declaration
+- No hidden coupling
+- No silent behavioral change
+- No convenience shortcuts
+
+Code clarity overrides abstraction density.
+
+Implicit magic is forbidden.
+
+---
+
+---
+
+## 17. Database Dump Structural Authority (NEW – CRITICAL)
+
+The PostgreSQL structural dump is the authoritative representation
+of the live relational structure.
+
+It overrides:
+
+- Assumptions
+- ORM interpretations
+- Migration memory
+- AI suggestions
+- Developer recollection
+
+Before performing ANY of the following:
+
+- Creating a new migration
+- Modifying an existing table
+- Adding or modifying a column
+- Creating or reusing ENUM types
+- Defining or altering foreign keys
+- Changing UNIQUE constraints
+- Modifying ON DELETE behavior
+- Referencing table or column names
+- Generating constraints in Alembic
+
+The current database dump MUST be reviewed.
+
+Verification must include:
+
+- Exact table names
+- Exact column names
+- Exact constraint names
+- Exact ENUM definitions
+- Existing UNIQUE constraints
+- Existing FK names
+- Existing ON DELETE rules
+- Current alembic_version
+
+Assumptions are prohibited.
+
+Recreating an existing ENUM without verification is prohibited.
+
+Changing constraint names without verification is prohibited.
+
+Modifying ON DELETE behavior without validation is prohibited.
+
+Any migration created without dump verification constitutes a structural governance breach.
+
+---
+
+## 18. Governance-Level Version Reinforcement
+
+Any modification affecting:
+
+- Pedagogical core
+- Consolidation engine
+- Stage progression
+- Aggregation logic
+- Curriculum versioning
+- Dual-environment governance rules
+- Guardrail enforcement mechanisms
+
+Requires:
+
+1. Major version increment
+2. Updated documentation
+3. Regression tests
+4. Git tag
+5. Push confirmation to remote repository
+
+Governance integrity overrides development velocity.
+
+---
+
+# End of Document – Version 2.0
