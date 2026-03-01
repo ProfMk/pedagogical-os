@@ -651,4 +651,33 @@ Governance integrity overrides development velocity.
 
 ---
 
+---
+
+## 19. Mandatory Clean Rebuild Migration Validation (CRITICAL)
+
+Structural migrations must be validated not only incrementally,
+but also through full schema reconstruction.
+
+Before approving any structural migration:
+
+1. Execute incremental upgrade in the active development database.
+2. Create a separate clean database instance.
+3. Execute `alembic upgrade head` from empty state.
+4. Confirm full schema reconstruction completes without errors.
+5. Confirm no ENUM duplication.
+6. Confirm no foreign key resolution errors.
+7. Confirm no missing dependency between revisions.
+8. Confirm metadata integrity.
+
+Primary development and production databases must never be destroyed.
+
+Clean rebuild validation must occur in an isolated temporary database.
+
+Failure of clean rebuild blocks migration approval.
+
+Approval without clean rebuild validation constitutes structural governance breach.
+
+---
+
 # End of Document – Version 2.0
+
