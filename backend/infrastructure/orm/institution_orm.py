@@ -1,8 +1,6 @@
 import uuid
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.sql import func
-
 from backend.infrastructure.orm.base import Base
 
 
@@ -15,15 +13,7 @@ class InstitutionORM(Base):
     governance = Column(JSONB, nullable=False)
     pedagogical_framework = Column(JSONB, nullable=False)
 
-    created_at = Column(
-        DateTime(timezone=False),
-        server_default=func.now(),
-        nullable=False,
-    )
+    organization_model = Column(String(20), nullable=False)
 
-    updated_at = Column(
-        DateTime(timezone=False),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
-    )
+    created_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=False)
