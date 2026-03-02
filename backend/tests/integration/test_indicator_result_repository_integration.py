@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from backend.infrastructure.orm.institution_orm import InstitutionORM
 from backend.infrastructure.orm.academic_year_orm import AcademicYearORM
+from backend.infrastructure.orm.academic_period_orm import AcademicPeriodORM
 from backend.infrastructure.orm.academic_level_orm import AcademicLevelORM
 from backend.infrastructure.orm.academic_grade_orm import AcademicGradeORM
 from backend.infrastructure.orm.subject_orm import SubjectORM
@@ -96,7 +97,24 @@ def test_update_override_persists_in_database(test_db_session: Session):
     test_db_session.add(academic_year)
 
     # ---------------------------
-    # 6. Curriculum Version
+    # 6. Academic Period  (OBBLIGATORIO)
+    # ---------------------------
+
+    academic_period = AcademicPeriodORM(
+        id=uuid4(),
+        academic_year_id=academic_year.id,
+        name="Q1",
+        start_date=date(2026, 1, 1),
+        end_date=date(2026, 3, 31),
+        is_closed=False,
+        snapshot_generated_at=None,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+    )
+    test_db_session.add(academic_period)
+
+    # ---------------------------
+    # 7. Curriculum Version
     # ---------------------------
 
     curriculum_version = CurriculumVersionORM(
@@ -115,7 +133,7 @@ def test_update_override_persists_in_database(test_db_session: Session):
     test_db_session.add(curriculum_version)
 
     # ---------------------------
-    # 7. Nucleus
+    # 8. Nucleus
     # ---------------------------
 
     nucleus = NucleusORM(
@@ -129,7 +147,7 @@ def test_update_override_persists_in_database(test_db_session: Session):
     test_db_session.add(nucleus)
 
     # ---------------------------
-    # 8. Competency
+    # 9. Competency
     # ---------------------------
 
     competency = CompetencyORM(
@@ -142,7 +160,7 @@ def test_update_override_persists_in_database(test_db_session: Session):
     test_db_session.add(competency)
 
     # ---------------------------
-    # 9. Indicator
+    # 10. Indicator
     # ---------------------------
 
     indicator = IndicatorORM(
@@ -157,7 +175,7 @@ def test_update_override_persists_in_database(test_db_session: Session):
     test_db_session.add(indicator)
 
     # ---------------------------
-    # 10. Student
+    # 11. Student
     # ---------------------------
 
     student = StudentORM(
@@ -172,12 +190,13 @@ def test_update_override_persists_in_database(test_db_session: Session):
     test_db_session.commit()
 
     # ---------------------------
-    # 11. Indicator Result
+    # 12. Indicator Result (CON PERIOD)
     # ---------------------------
 
     result = IndicatorResultORM(
         id=uuid4(),
         academic_year_id=academic_year.id,
+        academic_period_id=academic_period.id,
         student_id=student.id,
         indicator_id=indicator.id,
         calculated_level=Decimal("3.20"),
@@ -198,6 +217,7 @@ def test_update_override_persists_in_database(test_db_session: Session):
     result.override_flag = True
     result.override_comment = "Teacher override"
     result.final_level = Decimal("4.00")
+    result.updated_at = datetime.utcnow()
 
     test_db_session.commit()
 

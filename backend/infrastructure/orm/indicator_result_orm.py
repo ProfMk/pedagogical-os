@@ -10,6 +10,7 @@ class IndicatorResultORM(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     academic_year_id = Column(UUID(as_uuid=True), nullable=False)
+    academic_period_id = Column(UUID(as_uuid=True), nullable=False)
     student_id = Column(UUID(as_uuid=True), nullable=False)
     indicator_id = Column(UUID(as_uuid=True), nullable=False)
 

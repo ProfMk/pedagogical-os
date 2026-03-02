@@ -2,7 +2,6 @@ from uuid import UUID
 from decimal import Decimal
 
 from backend.application.ports.indicator_result_repository import IndicatorResultRepository
-from backend.domain.entities.indicator_result import IndicatorResult
 
 
 class OverrideIndicatorResultUseCase:
@@ -12,7 +11,7 @@ class OverrideIndicatorResultUseCase:
 
     def execute(
         self,
-        academic_year_id: UUID,
+        academic_period_id: UUID,
         student_id: UUID,
         indicator_id: UUID,
         new_final_level: Decimal,
@@ -20,7 +19,7 @@ class OverrideIndicatorResultUseCase:
     ) -> None:
 
         result = self._repository.get_by_scope(
-            academic_year_id=academic_year_id,
+            academic_period_id=academic_period_id,
             student_id=student_id,
             indicator_id=indicator_id,
         )
@@ -33,4 +32,4 @@ class OverrideIndicatorResultUseCase:
             comment=comment,
         )
 
-        self._repository.update(result)
+        self._repository.save(result)

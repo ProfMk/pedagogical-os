@@ -19,12 +19,12 @@ class FakeRepository:
     def __init__(self, result: IndicatorResult | None):
         self._result = result
 
-    def get_by_scope(self, academic_year_id, student_id, indicator_id):
+    def get_by_scope(self, academic_period_id, student_id, indicator_id):
         if self._result is None:
             return None
 
         if (
-            self._result.academic_year_id == academic_year_id
+            self._result.academic_period_id == academic_period_id
             and self._result.student_id == student_id
             and self._result.indicator_id == indicator_id
         ):
@@ -32,7 +32,7 @@ class FakeRepository:
 
         return None
 
-    def update(self, result: IndicatorResult):
+    def save(self, result: IndicatorResult):
         self._result = result
 
 
@@ -40,6 +40,7 @@ def build_result():
     return IndicatorResult(
         id=uuid4(),
         academic_year_id=uuid4(),
+        academic_period_id=uuid4(),
         student_id=uuid4(),
         indicator_id=uuid4(),
         calculated_level=Decimal("3.40"),
@@ -60,7 +61,7 @@ def test_returns_indicator_result_dto():
     )
 
     dto = use_case.execute(
-        academic_year_id=result.academic_year_id,
+        academic_period_id=result.academic_period_id,
         student_id=result.student_id,
         indicator_id=result.indicator_id,
     )
@@ -95,7 +96,7 @@ def test_full_override_and_read_flow():
 
     # Step 1: Apply override
     override_use_case.execute(
-        academic_year_id=result.academic_year_id,
+        academic_period_id=result.academic_period_id,
         student_id=result.student_id,
         indicator_id=result.indicator_id,
         new_final_level=Decimal("4.50"),
@@ -104,7 +105,7 @@ def test_full_override_and_read_flow():
 
     # Step 2: Read result
     dto = read_use_case.execute(
-        academic_year_id=result.academic_year_id,
+        academic_period_id=result.academic_period_id,
         student_id=result.student_id,
         indicator_id=result.indicator_id,
     )

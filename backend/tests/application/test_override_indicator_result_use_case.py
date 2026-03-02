@@ -10,13 +10,13 @@ class FakeIndicatorResultRepository:
 
     def __init__(self, result: IndicatorResult | None):
         self._result = result
-        self.updated = False
+        self.saved = False
 
-    def get_by_scope(self, academic_year_id, student_id, indicator_id):
+    def get_by_scope(self, academic_period_id, student_id, indicator_id):
         return self._result
 
-    def update(self, result: IndicatorResult):
-        self.updated = True
+    def save(self, result: IndicatorResult):
+        self.saved = True
         self._result = result
 
 
@@ -24,6 +24,7 @@ def build_indicator_result():
     return IndicatorResult(
         id=uuid4(),
         academic_year_id=uuid4(),
+        academic_period_id=uuid4(),
         student_id=uuid4(),
         indicator_id=uuid4(),
         calculated_level=Decimal("3.50"),
@@ -44,14 +45,14 @@ def test_override_sets_flag_when_level_changes():
     use_case = OverrideIndicatorResultUseCase(repo)
 
     use_case.execute(
-        academic_year_id=result.academic_year_id,
+        academic_period_id=result.academic_period_id,
         student_id=result.student_id,
         indicator_id=result.indicator_id,
         new_final_level=Decimal("4.00"),
         comment="Teacher adjustment",
     )
 
-    assert repo.updated is True
+    assert repo.saved is True
     assert result.final_level == Decimal("4.00")
     assert result.override_flag is True
     assert result.override_comment == "Teacher adjustment"
@@ -67,14 +68,14 @@ def test_override_unsets_flag_when_level_equals_calculated():
     use_case = OverrideIndicatorResultUseCase(repo)
 
     use_case.execute(
-        academic_year_id=result.academic_year_id,
+        academic_period_id=result.academic_period_id,
         student_id=result.student_id,
         indicator_id=result.indicator_id,
         new_final_level=Decimal("3.50"),
         comment=None,
     )
 
-    assert repo.updated is True
+    assert repo.saved is True
     assert result.override_flag is False
 
 
@@ -86,7 +87,7 @@ def test_override_raises_if_not_found():
 
     try:
         use_case.execute(
-            academic_year_id=uuid4(),
+            academic_period_id=uuid4(),
             student_id=uuid4(),
             indicator_id=uuid4(),
             new_final_level=Decimal("4.00"),

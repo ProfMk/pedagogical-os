@@ -7,6 +7,7 @@ from typing import Optional
 @dataclass
 class IndicatorResultReadDTO:
     academic_year_id: UUID
+    academic_period_id: UUID
     student_id: UUID
     indicator_id: UUID
 

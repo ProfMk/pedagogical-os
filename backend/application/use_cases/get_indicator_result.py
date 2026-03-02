@@ -15,13 +15,13 @@ class GetIndicatorResultUseCase:
 
     def execute(
         self,
-        academic_year_id: UUID,
+        academic_period_id: UUID,
         student_id: UUID,
         indicator_id: UUID,
     ) -> IndicatorResultReadDTO:
 
         result = self._repository.get_by_scope(
-            academic_year_id=academic_year_id,
+            academic_period_id=academic_period_id,
             student_id=student_id,
             indicator_id=indicator_id,
         )
@@ -31,6 +31,7 @@ class GetIndicatorResultUseCase:
 
         return IndicatorResultReadDTO(
             academic_year_id=result.academic_year_id,
+            academic_period_id=result.academic_period_id,
             student_id=result.student_id,
             indicator_id=result.indicator_id,
             calculated_level=result.calculated_level,
