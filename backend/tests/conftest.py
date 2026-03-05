@@ -6,9 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.infrastructure.orm.base import Base
-from backend.tests.fixtures.academic_context import academic_context as academic_context
 import backend.infrastructure.orm as orm_package
 
+# import fixture so pytest discovers it
+from backend.tests.fixtures.academic_context import academic_context
 
 
 TEST_DATABASE_URL = "postgresql+psycopg2://postgres:postgres@localhost:5432/pedagogical_os_test"

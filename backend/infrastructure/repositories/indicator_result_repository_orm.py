@@ -103,6 +103,20 @@ class IndicatorResultRepositoryORM(IndicatorResultRepository):
         self._session.commit()
 
     # ==========================================================
+    # GET ALL BY PERIOD (USED FOR REPORT CARD CALCULATION)
+    # ==========================================================
+
+    def get_all_by_period(self, academic_period_id: UUID) -> list[IndicatorResult]:
+
+        orm_results = (
+            self._session.query(IndicatorResultORM)
+            .filter_by(academic_period_id=academic_period_id)
+            .all()
+        )
+
+        return [self._to_domain(obj) for obj in orm_results]
+
+    # ==========================================================
     # MAPPER
     # ==========================================================
 
@@ -121,3 +135,4 @@ class IndicatorResultRepositoryORM(IndicatorResultRepository):
             created_at=orm_obj.created_at,
             updated_at=orm_obj.updated_at,
         )
+    

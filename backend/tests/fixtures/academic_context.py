@@ -14,6 +14,9 @@ from backend.infrastructure.orm.nucleus_orm import NucleusORM
 from backend.infrastructure.orm.competency_orm import CompetencyORM
 from backend.infrastructure.orm.indicator_orm import IndicatorORM
 from backend.infrastructure.orm.student_orm import StudentORM
+from backend.infrastructure.orm.student_enrollment_orm import StudentEnrollmentORM
+from backend.infrastructure.orm.indicator_result_orm import IndicatorResultORM
+from backend.infrastructure.orm.academic_group_orm import AcademicGroupORM
 
 
 @pytest.fixture
@@ -185,6 +188,72 @@ def academic_context(test_db_session):
         updated_at=now,
     )
     session.add(student)
+    session.flush()
+
+    # ---------------------------
+    # Academic Group
+    # ---------------------------
+    academic_group = AcademicGroupORM(
+        id=uuid.uuid4(),
+        academic_year_id=academic_year.id,
+        academic_grade_id=grade.id,
+        name="5A",
+        created_at=now,
+        updated_at=now,
+    )
+    session.add(academic_group)
+    session.flush()
+
+    # ---------------------------
+    # Academic Group
+    # ---------------------------
+    academic_group = AcademicGroupORM(
+        id=uuid.uuid4(),
+        academic_year_id=academic_year.id,
+        academic_grade_id=grade.id,
+        name="5A",
+        created_at=now,
+        updated_at=now,
+    )
+
+    session.add(academic_group)
+    session.flush()
+    # ---------------------------
+    # Student Enrollment
+    # ---------------------------
+    enrollment = StudentEnrollmentORM(
+        id=uuid.uuid4(),
+        academic_year_id=academic_year.id,
+        student_id=student.id,
+        academic_group_id=academic_group.id,
+        enrolled_at=now,
+        withdrawn_at=None,
+        is_active=True,
+        created_at=now,
+        updated_at=now,
+    )
+
+    session.add(enrollment)
+    session.flush()
+
+    # ---------------------------
+    # Indicator Result
+    # ---------------------------
+    indicator_result = IndicatorResultORM(
+        id=uuid.uuid4(),
+        academic_year_id=academic_year.id,
+        academic_period_id=academic_period.id,
+        student_id=student.id,
+        indicator_id=indicator.id,
+        calculated_level=2,
+        final_level=2,
+        override_flag=False,
+        override_comment=None,
+        created_at=now,
+        updated_at=now,
+    )
+    session.add(indicator_result)
+
     session.commit()
 
     return {
@@ -193,6 +262,9 @@ def academic_context(test_db_session):
         "academic_period": academic_period,
         "student": student,
         "indicator": indicator,
+        "student_enrollment": enrollment,
+        "indicator_result": indicator_result,
     }
+
 
 __all__ = ["academic_context"]
