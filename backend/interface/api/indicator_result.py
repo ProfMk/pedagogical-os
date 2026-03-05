@@ -2,7 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend.infrastructure.orm.session import get_session
-from backend.infrastructure.orm.indicator_result_orm import IndicatorResultORM
+from backend.infrastructure.repositories.indicator_result_repository import (
+    IndicatorResultRepositoryORM,
+)
+
+from backend.application.use_cases.override_indicator_result import (
+    OverrideIndicatorResultUseCase,
+)
+from backend.application.use_cases.get_indicator_result import (
+    GetIndicatorResultUseCase,
+)
 
 from backend.interface.schemas.indicator_result import (
     IndicatorResultOverrideRequest,
@@ -18,24 +27,26 @@ def override_indicator_result(
     db: Session = Depends(get_session),
 ):
 
-    result = (
-        db.query(IndicatorResultORM)
-        .filter(
-            IndicatorResultORM.academic_year_id == payload.academic_year_id,
-            IndicatorResultORM.student_id == payload.student_id,
-            IndicatorResultORM.indicator_id == payload.indicator_id,
+    repository = IndicatorResultRepositoryORM(db)
+
+    override_use_case = OverrideIndicatorResultUseCase(repository)
+    get_use_case = GetIndicatorResultUseCase(repository)
+
+    try:
+        override_use_case.execute(
+            academic_year_id=payload.academic_year_id,
+            student_id=payload.student_id,
+            indicator_id=payload.indicator_id,
+            new_final_level=payload.new_final_level,
+            override_comment=payload.override_comment,
         )
-        .first()
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+
+    result = get_use_case.execute(
+        academic_year_id=payload.academic_year_id,
+        student_id=payload.student_id,
+        indicator_id=payload.indicator_id,
     )
-
-    if not result:
-        raise HTTPException(status_code=404, detail="Indicator result not found")
-
-    result.final_level = payload.new_final_level
-    result.override_flag = True
-    result.override_comment = payload.override_comment
-
-    db.commit()
-    db.refresh(result)
 
     return result
