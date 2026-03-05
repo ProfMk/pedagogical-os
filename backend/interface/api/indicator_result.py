@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend.infrastructure.orm.session import get_session
-from backend.infrastructure.repositories.indicator_result_repository import (
+from backend.infrastructure.repositories.indicator_result_repository_orm import (
     IndicatorResultRepositoryORM,
 )
 
@@ -34,17 +34,17 @@ def override_indicator_result(
 
     try:
         override_use_case.execute(
-            academic_year_id=payload.academic_year_id,
+            academic_period_id=payload.academic_period_id,
             student_id=payload.student_id,
             indicator_id=payload.indicator_id,
             new_final_level=payload.new_final_level,
-            override_comment=payload.override_comment,
+            comment=payload.override_comment,
         )
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 
     result = get_use_case.execute(
-        academic_year_id=payload.academic_year_id,
+        academic_period_id=payload.academic_period_id,
         student_id=payload.student_id,
         indicator_id=payload.indicator_id,
     )
