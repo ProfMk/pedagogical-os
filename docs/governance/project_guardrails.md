@@ -1,5 +1,5 @@
 # Pedagogical OS – Project Guardrails
-Version: 1.0
+Version: 3.0
 Status: Active
 Scope: Global (applies to entire repository)
 
@@ -678,6 +678,22 @@ Failure of clean rebuild blocks migration approval.
 Approval without clean rebuild validation constitutes structural governance breach.
 
 ---
+# ADDENDUM — testing  (Version 3.0)
+## Testing Architecture Governance
 
-# End of Document – Version 2.0
+Pedagogical OS enforces a structured testing architecture:
+
+tests/unit
+tests/integration
+tests/simulation
+
+This ensures deterministic validation of pedagogical engines and prevents
+test dataset inconsistencies.
+
+All pedagogical datasets must be generated through approved builders or
+standardized SQL seeds.
+
+Direct construction of complex pedagogical datasets inside tests is forbidden.
+
+# End of Document – Version 3.0
 
