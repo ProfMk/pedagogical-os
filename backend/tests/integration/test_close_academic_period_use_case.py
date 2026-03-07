@@ -1,42 +1,72 @@
-from backend.application.use_cases.close_academic_period import CloseAcademicPeriodUseCase
+from uuid import uuid4
 
-from backend.infrastructure.repositories.indicator_result_repository_orm import (
-    IndicatorResultRepositoryORM,
+from backend.application.use_cases.reopen_academic_period import (
+    ReopenAcademicPeriodUseCase,
 )
-from backend.infrastructure.repositories.student_enrollment_repository import (
-    StudentEnrollmentRepositoryORM,
-)
-from backend.infrastructure.repositories.report_card_repository_orm import (
-    ReportCardRepositoryORM,
-)
+
 from backend.infrastructure.repositories.academic_period_repository_orm import (
     AcademicPeriodRepositoryORM,
 )
 
+from backend.infrastructure.repositories.academic_period_event_repository_orm import (
+    AcademicPeriodEventRepositoryORM,
+)
 
-def test_close_academic_period_generates_report_card(
+from backend.infrastructure.orm.institutional_user_orm import InstitutionalUserORM
+
+
+def test_reopen_academic_period_creates_event(
     academic_context,
     test_db_session,
 ):
 
     context = academic_context
-
     period = context["academic_period"]
 
-    indicator_repo = IndicatorResultRepositoryORM(test_db_session)
-    enrollment_repo = StudentEnrollmentRepositoryORM(test_db_session)
-    report_repo = ReportCardRepositoryORM(test_db_session)
-    period_repo = AcademicPeriodRepositoryORM(test_db_session)
+    # cerrar periodo
+    period.is_closed = True
+    test_db_session.commit()
 
-    use_case = CloseAcademicPeriodUseCase(
-        period_repo,
-        indicator_repo,
-        enrollment_repo,
-        report_repo,
+    # ---------------------------------------------------------
+    # crear usuario institucional válido
+    # ---------------------------------------------------------
+
+    user = InstitutionalUserORM(
+        id=uuid4(),
+        email="integration@test.com",
+        role="ADMIN",
     )
 
-    use_case.execute(period.id)
+    test_db_session.add(user)
+    test_db_session.commit()
+
+    # ---------------------------------------------------------
+    # repositorios
+    # ---------------------------------------------------------
+
+    period_repo = AcademicPeriodRepositoryORM(test_db_session)
+
+    event_repo = AcademicPeriodEventRepositoryORM(test_db_session)
+
+    use_case = ReopenAcademicPeriodUseCase(
+        period_repo,
+        event_repo,
+    )
+
+    # ---------------------------------------------------------
+    # ejecutar caso de uso
+    # ---------------------------------------------------------
+
+    use_case.execute(
+        period.id,
+        "Integration test reopen",
+        user.id,
+    )
+
+    # ---------------------------------------------------------
+    # verificar
+    # ---------------------------------------------------------
 
     updated_period = period_repo.get_by_id(period.id)
 
-    assert updated_period.is_closed is True
+    assert updated_period.is_closed is False

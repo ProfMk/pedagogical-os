@@ -18,16 +18,34 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-academic_period_event_type = sa.Enum(
-    "PERIOD_CLOSED",
-    "PERIOD_REOPENED",
-    name="academic_period_event_type",
-)
-
-
 def upgrade() -> None:
     bind = op.get_bind()
-    academic_period_event_type.create(bind, checkfirst=True)
+
+    op.execute(
+        """
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM pg_type
+                WHERE typname = 'academic_period_event_type'
+            ) THEN
+                CREATE TYPE academic_period_event_type AS ENUM (
+                    'PERIOD_CLOSED',
+                    'PERIOD_REOPENED'
+                );
+            END IF;
+        END
+        $$;
+        """
+    )
+
+    academic_period_event_type = postgresql.ENUM(
+        "PERIOD_CLOSED",
+        "PERIOD_REOPENED",
+        name="academic_period_event_type",
+        create_type=False,
+    )
 
     op.create_table(
         "academic_period_event",
@@ -58,5 +76,18 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table("academic_period_event")
 
-    bind = op.get_bind()
-    academic_period_event_type.drop(bind, checkfirst=True)
+    op.execute(
+        """
+        DO $$
+        BEGIN
+            IF EXISTS (
+                SELECT 1
+                FROM pg_type
+                WHERE typname = 'academic_period_event_type'
+            ) THEN
+                DROP TYPE academic_period_event_type;
+            END IF;
+        END
+        $$;
+        """
+    )
