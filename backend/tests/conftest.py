@@ -7,10 +7,13 @@ from sqlalchemy.orm import sessionmaker
 
 from backend.infrastructure.orm.base import Base
 import backend.infrastructure.orm as orm_package
+from backend.tests.fixtures.real_school_dataset import real_school_dataset
+from backend.tests.fixtures.load_test_seed import load_sql_file
 
 # import fixture so pytest discovers it
 from backend.tests.fixtures.academic_context import academic_context
 
+pytestmark = pytest.mark.integration
 
 TEST_DATABASE_URL = "postgresql+psycopg2://postgres:postgres@localhost:5432/pedagogical_os_test"
 

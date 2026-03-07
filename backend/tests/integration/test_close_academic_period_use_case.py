@@ -1,72 +1,70 @@
+from datetime import date
 from uuid import uuid4
 
-from backend.application.use_cases.reopen_academic_period import (
-    ReopenAcademicPeriodUseCase,
-)
-
-from backend.infrastructure.repositories.academic_period_repository_orm import (
-    AcademicPeriodRepositoryORM,
-)
-
+from backend.application.use_cases.close_academic_period import CloseAcademicPeriodUseCase
+from backend.domain.entities.academic_period import AcademicPeriod
 from backend.infrastructure.repositories.academic_period_event_repository_orm import (
     AcademicPeriodEventRepositoryORM,
 )
 
-from backend.infrastructure.orm.institutional_user_orm import InstitutionalUserORM
+from backend.tests.integration.test_reopen_academic_period_use_case import (
+    InMemoryAcademicPeriodRepository,
+    InMemorySession,
+)
 
 
-def test_reopen_academic_period_creates_event(
-    academic_context,
-    test_db_session,
-):
+class FakeIndicatorResultRepository:
+    def get_all_by_period(self, academic_period_id):
+        return []
 
-    context = academic_context
-    period = context["academic_period"]
 
-    # cerrar periodo
-    period.is_closed = True
-    test_db_session.commit()
+class FakeEnrollmentRepository:
+    def get_active_students(self, academic_year_id):
+        return []
 
-    # ---------------------------------------------------------
-    # crear usuario institucional válido
-    # ---------------------------------------------------------
 
-    user = InstitutionalUserORM(
+class FakeReportCardRepository:
+    def save_nucleus_results(self, results):
+        pass
+
+    def save_subject_results(self, results):
+        pass
+
+
+def test_close_academic_period_creates_event():
+
+    period = AcademicPeriod(
         id=uuid4(),
-        email="integration@test.com",
-        role="ADMIN",
+        academic_year_id=uuid4(),
+        name="Q1",
+        start_date=date(2026, 1, 1),
+        end_date=date(2026, 3, 31),
+        is_closed=False,
     )
 
-    test_db_session.add(user)
-    test_db_session.commit()
+    period_repo = InMemoryAcademicPeriodRepository(period)
 
-    # ---------------------------------------------------------
-    # repositorios
-    # ---------------------------------------------------------
+    session = InMemorySession()
 
-    period_repo = AcademicPeriodRepositoryORM(test_db_session)
+    event_repo = AcademicPeriodEventRepositoryORM(session)
 
-    event_repo = AcademicPeriodEventRepositoryORM(test_db_session)
+    indicator_repo = FakeIndicatorResultRepository()
+    enrollment_repo = FakeEnrollmentRepository()
+    report_repo = FakeReportCardRepository()
 
-    use_case = ReopenAcademicPeriodUseCase(
+    use_case = CloseAcademicPeriodUseCase(
         period_repo,
+        indicator_repo,
+        enrollment_repo,
+        report_repo,
         event_repo,
     )
 
-    # ---------------------------------------------------------
-    # ejecutar caso de uso
-    # ---------------------------------------------------------
-
     use_case.execute(
-        period.id,
-        "Integration test reopen",
-        user.id,
+        academic_period_id=period.id,
+        performed_by_user_id=uuid4(),
     )
 
-    # ---------------------------------------------------------
-    # verificar
-    # ---------------------------------------------------------
-
-    updated_period = period_repo.get_by_id(period.id)
-
-    assert updated_period.is_closed is False
+    assert period.is_closed is True
+    assert len(session.items) == 1
+    assert session.items[0].event_type == "PERIOD_CLOSED"
