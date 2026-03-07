@@ -1,57 +1,49 @@
 from typing import List
 from uuid import UUID
 
-from sqlalchemy.orm import Session, selectinload
-from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from backend.domain.entities.student_indicator_progress import (
-    StudentIndicatorProgress
+from backend.application.ports.student_indicator_progress_reader_port import (
+    StudentIndicatorProgressReaderPort
 )
+
 from backend.infrastructure.orm.student_indicator_progress_orm import (
     StudentIndicatorProgressORM
 )
-from backend.infrastructure.orm.student_orm import StudentORM
 
 
-class StudentIndicatorProgressRepositoryORM:
-    """
-    ORM-based repository for reading StudentIndicatorProgress
-    from PostgreSQL using SQLAlchemy Session.
-
-    This repository:
-    - performs ONLY data access
-    - performs NO aggregation
-    - performs NO business logic
-    """
+class StudentIndicatorProgressRepositoryORM(
+    StudentIndicatorProgressReaderPort
+):
 
     def __init__(self, session: Session):
         self.session = session
 
-    def get_by_group_and_indicator(
+    def get_student_indicator_progress(
         self,
-        group_id: str,
-        indicator_id: UUID,
-    ) -> List[StudentIndicatorProgress]:
-        """
-        Returns all StudentIndicatorProgress domain entities
-        for students belonging to a given group and indicator.
-        """
+        student_id: UUID,
+        academic_year_id: UUID
+    ) -> List[dict]:
 
-        stmt = (
-            select(StudentIndicatorProgressORM)
-            .join(StudentORM, StudentORM.id == StudentIndicatorProgressORM.student_id)
-            .where(StudentORM.group_id == group_id)
-            .where(StudentIndicatorProgressORM.indicator_id == indicator_id)
+        rows = (
+            self.session.query(StudentIndicatorProgressORM)
+            .filter(
+                StudentIndicatorProgressORM.student_id == student_id,
+                StudentIndicatorProgressORM.academic_year_id == academic_year_id
+            )
+            .all()
         )
 
-        results = self.session.execute(stmt).scalars().all()
+        results = []
 
-        return [
-            StudentIndicatorProgress(
-                student_id=orm_obj.student_id,
-                indicator_id=orm_obj.indicator_id,
-                current_stage_order=orm_obj.current_stage_order,
-                consolidation_score=float(orm_obj.consolidation_score),
+        for row in rows:
+            results.append(
+                {
+                    "indicator_id": row.indicator_id,
+                    "current_stage_order": row.current_stage_order,
+                    "consolidation_score": row.consolidation_score,
+                    "normalized_level_internal": row.normalized_level_internal
+                }
             )
-            for orm_obj in results
-        ]
+
+        return results

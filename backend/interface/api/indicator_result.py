@@ -1,52 +1,36 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+
+from backend.application.use_cases.get_indicator_result import (
+    GetIndicatorResultUseCase,
+)
 
 from backend.infrastructure.orm.session import get_session
 from backend.infrastructure.repositories.indicator_result_repository_orm import (
     IndicatorResultRepositoryORM,
 )
 
-from backend.application.use_cases.override_indicator_result import (
-    OverrideIndicatorResultUseCase,
-)
-from backend.application.use_cases.get_indicator_result import (
-    GetIndicatorResultUseCase,
-)
-
-from backend.interface.schemas.indicator_result import (
-    IndicatorResultOverrideRequest,
-    IndicatorResultResponse,
-)
-
-router = APIRouter(prefix="/indicator-results", tags=["Indicator Results"])
+router = APIRouter()
 
 
-@router.patch("/override", response_model=IndicatorResultResponse)
-def override_indicator_result(
-    payload: IndicatorResultOverrideRequest,
-    db: Session = Depends(get_session),
+def get_use_case(session=Depends(get_session)):
+    repository = IndicatorResultRepositoryORM(session)
+    return GetIndicatorResultUseCase(repository)
+
+
+@router.get("/indicator-result")
+def get_indicator_result(
+    student_id: UUID,
+    indicator_id: UUID,
+    academic_period_id: UUID,
+    use_case: GetIndicatorResultUseCase = Depends(get_use_case),
 ):
 
-    repository = IndicatorResultRepositoryORM(db)
-
-    override_use_case = OverrideIndicatorResultUseCase(repository)
-    get_use_case = GetIndicatorResultUseCase(repository)
-
-    try:
-        override_use_case.execute(
-            academic_period_id=payload.academic_period_id,
-            student_id=payload.student_id,
-            indicator_id=payload.indicator_id,
-            new_final_level=payload.new_final_level,
-            comment=payload.override_comment,
-        )
-    except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
-
-    result = get_use_case.execute(
-        academic_period_id=payload.academic_period_id,
-        student_id=payload.student_id,
-        indicator_id=payload.indicator_id,
+    result = use_case.execute(
+        student_id=student_id,
+        indicator_id=indicator_id,
+        academic_period_id=academic_period_id,
     )
 
     return result
