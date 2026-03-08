@@ -2,8 +2,9 @@ from fastapi import FastAPI
 
 from backend.interface.api.dashboard import router as dashboard_router
 from backend.interface.api.indicator_result import router as indicator_result_router
-
-
+from backend.interface.api.teacher_navigation_router import (
+    router as teacher_navigation_router,
+)
 
 
 def create_app() -> FastAPI:
@@ -16,6 +17,7 @@ def create_app() -> FastAPI:
 
     app.include_router(dashboard_router)
     app.include_router(indicator_result_router)
+    app.include_router(teacher_navigation_router)
 
     return app
 
