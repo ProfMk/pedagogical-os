@@ -42,3 +42,22 @@ def get_student_indicator_dashboard(
         "consolidationScore": dto.consolidation_score,
         "hasLowConsolidationAlert": dto.has_low_consolidation_alert,
     }
+
+@router.get("/dashboard")
+def get_dashboard_summary():
+    """
+    Temporary dashboard summary endpoint.
+
+    This endpoint will later be connected to a proper
+    DashboardSummaryUseCase.
+
+    For now it allows the frontend architecture to run
+    without breaking.
+    """
+
+    return {
+        "subjectGroups": [],
+        "students": [],
+        "alerts": [],
+        "progressSummary": {}
+    }
