@@ -5,9 +5,10 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from backend.application.dtos.teacher_group_dto import TeacherGroupDTO
+from backend.application.ports.group_repository_port import GroupRepositoryPort
 
 
-class GroupRepository:
+class GroupRepository(GroupRepositoryPort):
 
     def __init__(self, session: Session):
         self.session = session

@@ -2,12 +2,11 @@ from typing import List
 from uuid import UUID
 
 from backend.application.dtos.student_indicator_dto import StudentIndicatorDTO
-from backend.infrastructure.repositories.indicator_repository import IndicatorRepository
-
+from backend.application.ports.indicator_repository_port import IndicatorRepositoryPort
 
 class GetStudentIndicatorsUseCase:
 
-    def __init__(self, repository: IndicatorRepository):
+    def __init__(self, repository: IndicatorRepositoryPort):
         self.repository = repository
 
     def execute(

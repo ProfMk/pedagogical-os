@@ -2,12 +2,11 @@ from typing import List
 from uuid import UUID
 
 from backend.application.dtos.group_student_dto import GroupStudentDTO
-from backend.infrastructure.repositories.student_repository import StudentRepository
-
+from backend.application.ports.student_repository_port import StudentRepositoryPort
 
 class GetGroupStudentsUseCase:
 
-    def __init__(self, repository: StudentRepository):
+    def __init__(self, repository: StudentRepositoryPort):
         self.repository = repository
 
     def execute(

@@ -6,9 +6,10 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from backend.application.dtos.student_indicator_dto import StudentIndicatorDTO
+from backend.application.ports.indicator_repository_port import IndicatorRepositoryPort
 
 
-class IndicatorRepository:
+class IndicatorRepository(IndicatorRepositoryPort):
 
     def __init__(self, session: Session):
         self.session = session
