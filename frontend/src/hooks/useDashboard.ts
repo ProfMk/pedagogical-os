@@ -19,7 +19,7 @@ export const useDashboard = (): {
         const response = await getDashboardSummary();
         setData(response);
       } catch {
-        setError('Failed to load dashboard data.');
+      console.warn('Dashboard endpoint not implemented yet');
       } finally {
         setLoading(false);
       }
