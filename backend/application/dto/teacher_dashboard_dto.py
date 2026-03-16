@@ -6,6 +6,9 @@ from pydantic import BaseModel
 
 class IndicatorDashboardDTO(BaseModel):
     indicatorId: UUID
+    competencyName: str | None = None
+    indicatorName: str | None = None
+    microStageName: str | None = None
     currentStage: int
     totalStages: int
     consolidation: float | None

@@ -11,22 +11,42 @@ const TeacherDashboardPage = (): JSX.Element => {
     <div>
       <h1>Teacher Dashboard</h1>
 
-      {data.groups.map((group) => (
+      {data.groups?.map((group) => (
         <div key={group.groupId}>
           <h2>{group.groupName}</h2>
 
-          {group.students.map((student) => (
+          {group.students?.map((student) => (
             <div key={student.studentId}>
               <h3>{student.studentName}</h3>
 
-              {student.indicators.map((indicator) => (
-                <div key={indicator.indicatorId}>
-                  Stage {indicator.currentStage}/{indicator.totalStages} —
-                  Consolidation: {indicator.consolidation}
+              {student.indicators?.map((indicator, idx) => (
+                <div key={indicator.indicatorId + "-" + idx}>
+
+                  <div>
+                    <strong>{(indicator as any).competencyName}</strong>
+                  </div>
+
+                  <div>
+                    <strong>{indicator.indicatorName}</strong>
+                  </div>
+
+                  <div>
+                    {indicator.microStageName}
+                  </div>
+
+                  <div>
+                    Stage {indicator.currentStage}/{indicator.totalStages} — 
+                    Consolidation: {indicator.consolidation}
+                  </div>
+
+                  <br/>
+
                 </div>
               ))}
+
             </div>
           ))}
+
         </div>
       ))}
     </div>

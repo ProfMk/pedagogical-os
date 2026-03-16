@@ -16,8 +16,12 @@ export const useDashboard = (): {
     const load = async (): Promise<void> => {
       try {
         setLoading(true);
-        const response = await getDashboardSummary();
-        setData(response);
+        try {
+    const response = await getDashboardSummary();
+    setData(response);
+}     catch {
+    // dashboard summary optional
+}
       } catch {
       console.warn('Dashboard endpoint not implemented yet');
       } finally {

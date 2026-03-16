@@ -2,9 +2,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-from backend.application.dtos.group_student_dto import GroupStudentDTO
-from backend.application.dtos.student_indicator_dto import StudentIndicatorDTO
-from backend.application.dtos.teacher_group_dto import TeacherGroupDTO
+from backend.application.dto.group_student_dto import GroupStudentDTO
+from backend.application.dto.student_indicator_dto import StudentIndicatorDTO
+from backend.application.dto.teacher_group_dto import TeacherGroupDTO
 from backend.application.use_cases.get_group_students_use_case import (
     GetGroupStudentsUseCase,
 )

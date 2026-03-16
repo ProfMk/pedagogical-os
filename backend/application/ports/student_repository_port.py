@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 from uuid import UUID
 
-from backend.application.dtos.group_student_dto import GroupStudentDTO
+from backend.application.dto.group_student_dto import GroupStudentDTO
 
 
 class StudentRepositoryPort(ABC):

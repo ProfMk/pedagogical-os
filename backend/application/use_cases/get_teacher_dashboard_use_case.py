@@ -6,11 +6,10 @@ from backend.application.dto.teacher_dashboard_dto import (
     StudentDashboardDTO,
     TeacherDashboardResponse,
 )
-from backend.infrastructure.repositories.dashboard_repository import DashboardRepository
 
 
 class GetTeacherDashboardUseCase:
-    def __init__(self, repository: DashboardRepository):
+    def __init__(self, repository):
         self.repository = repository
 
     def execute(
@@ -18,6 +17,7 @@ class GetTeacherDashboardUseCase:
         institution_id: UUID,
         academic_year_id: UUID,
     ) -> TeacherDashboardResponse:
+
         dataset = self.repository.get_teacher_dashboard_dataset(
             institution_id=institution_id,
             academic_year_id=academic_year_id,
@@ -48,18 +48,26 @@ class GetTeacherDashboardUseCase:
                 },
             )
 
-            student_entry["indicators_map"][indicator_id] = IndicatorDashboardDTO(
-                indicatorId=indicator_id,
-                currentStage=row["current_stage_order"],
-                totalStages=row["total_stages"],
-                consolidation=row["consolidation_score"],
-                normalizedLevel=row["normalized_level_internal"],
-            )
+            if indicator_id not in student_entry["indicators_map"]:
+                student_entry["indicators_map"][indicator_id] = IndicatorDashboardDTO(
+                    indicatorId=indicator_id,
+                    competencyName=row.get("competency_name"),
+                    indicatorName=row.get("indicator_name"),
+                    microStageName=row.get("micro_stage_name"),
+                    currentStage=row["current_stage_order"],
+                    totalStages=row["total_stages"],
+                    consolidation=row["consolidation_score"],
+                    normalizedLevel=row["normalized_level_internal"],
+                )
 
         groups = []
+
         for group_entry in groups_map.values():
+
             students = []
+
             for student_entry in group_entry["students_map"].values():
+
                 students.append(
                     StudentDashboardDTO(
                         studentId=student_entry["studentId"],
@@ -76,4 +84,7 @@ class GetTeacherDashboardUseCase:
                 )
             )
 
-        return TeacherDashboardResponse(groups=groups, alerts=[])
+        return TeacherDashboardResponse(
+            groups=groups,
+            alerts=[],
+        )

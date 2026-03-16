@@ -1,11 +1,33 @@
-export type DashboardApiResponse = {
-  summary: string;
-};
+export type IndicatorProgress = {
+  indicatorId: string
+  competencyName?: string
+  indicatorName?: string
+  microStageName?: string
+  currentStage: number
+  totalStages: number
+  consolidation?: number
+  normalizedLevel?: number
+}
 
-export type StudentApiResponse = {
-  students: Array<{ id: string; name: string }>;
-};
+export interface StudentDashboard {
+  studentId: string;
+  studentName: string;
+  indicators: IndicatorProgress[];
+}
 
-export type IndicatorApiResponse = {
-  indicators: Array<{ id: string; label: string }>;
-};
+export interface GroupDashboard {
+  groupId: string;
+  groupName: string;
+  students: StudentDashboard[];
+}
+
+export interface DashboardAlert {
+  indicatorId: string;
+  alertType: string;
+  affectedStudents: number;
+}
+
+export interface TeacherDashboardResponse {
+  groups: GroupDashboard[];
+  alerts: DashboardAlert[];
+}

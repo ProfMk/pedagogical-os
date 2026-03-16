@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-
+import TeacherDashboardPage from '../pages/TeacherDashboardPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { GroupPage } from '../pages/GroupPage';
 import { IndicatorPage } from '../pages/IndicatorPage';
@@ -25,5 +25,9 @@ export const router = createBrowserRouter([
   {
     path: '/dashboard/indicators/:indicatorId',
     element: <IndicatorPage />
+  },
+  {
+    path: '/teacher/dashboard',
+    element: <TeacherDashboardPage />
   }
 ]);

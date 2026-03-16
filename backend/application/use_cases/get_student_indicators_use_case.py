@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from backend.application.dtos.student_indicator_dto import StudentIndicatorDTO
+from backend.application.dto.student_indicator_dto import StudentIndicatorDTO
 from backend.application.ports.indicator_repository_port import IndicatorRepositoryPort
 
 class GetStudentIndicatorsUseCase:

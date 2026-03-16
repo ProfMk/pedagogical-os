@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from backend.application.dtos.group_student_dto import GroupStudentDTO
+from backend.application.dto.group_student_dto import GroupStudentDTO
 from backend.application.ports.student_repository_port import StudentRepositoryPort
 
 

@@ -1,5 +1,7 @@
 export interface IndicatorProgress {
   indicatorId: string;
+  indicatorName: string;
+  microStageName: string;
   currentStage: number;
   totalStages: number;
   consolidation: number;
