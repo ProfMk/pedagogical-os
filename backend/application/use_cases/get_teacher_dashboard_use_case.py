@@ -23,6 +23,10 @@ class GetTeacherDashboardUseCase:
             academic_year_id=academic_year_id,
         )
 
+        # Edge case: empty dataset
+        if not dataset:
+            return TeacherDashboardResponse(groups=[], alerts=[])
+
         groups_map: dict = {}
 
         for row in dataset:
@@ -30,6 +34,7 @@ class GetTeacherDashboardUseCase:
             student_id = row["student_id"]
             indicator_id = row["indicator_id"]
 
+            # --- GROUP ---
             group_entry = groups_map.setdefault(
                 group_id,
                 {
@@ -39,7 +44,10 @@ class GetTeacherDashboardUseCase:
                 },
             )
 
-            student_entry = group_entry["students_map"].setdefault(
+            # --- STUDENT ---
+            students_map = group_entry["students_map"]
+
+            student_entry = students_map.setdefault(
                 student_id,
                 {
                     "studentId": student_id,
@@ -48,31 +56,63 @@ class GetTeacherDashboardUseCase:
                 },
             )
 
-            if indicator_id not in student_entry["indicators_map"]:
-                student_entry["indicators_map"][indicator_id] = IndicatorDashboardDTO(
+            # --- INDICATOR ---
+            indicators_map = student_entry["indicators_map"]
+
+            indicator_values = {
+                "currentStage": row["current_stage_order"],
+                "totalStages": row["total_stages"],
+                "consolidation": row["consolidation_score"],
+                "normalizedLevel": row["normalized_level_internal"],
+            }
+
+            existing_indicator = indicators_map.get(indicator_id)
+
+            if existing_indicator is None:
+                indicators_map[indicator_id] = IndicatorDashboardDTO(
                     indicatorId=indicator_id,
-                    competencyName=row.get("competency_name"),
-                    indicatorName=row.get("indicator_name"),
-                    microStageName=row.get("micro_stage_name"),
-                    currentStage=row["current_stage_order"],
-                    totalStages=row["total_stages"],
-                    consolidation=row["consolidation_score"],
-                    normalizedLevel=row["normalized_level_internal"],
+                    currentStage=indicator_values["currentStage"],
+                    totalStages=indicator_values["totalStages"],
+                    consolidation=indicator_values["consolidation"],
+                    normalizedLevel=indicator_values["normalizedLevel"],
                 )
+                continue
+
+            # --- DUPLICATE VALIDATION ---
+            if (
+                existing_indicator.currentStage != indicator_values["currentStage"]
+                or existing_indicator.totalStages != indicator_values["totalStages"]
+                or existing_indicator.consolidation != indicator_values["consolidation"]
+                or existing_indicator.normalizedLevel != indicator_values["normalizedLevel"]
+            ):
+                raise ValueError(
+                    "Inconsistent duplicate indicator row detected"
+                )
+
+        # --- BUILD RESPONSE (DETERMINISTIC ORDER) ---
 
         groups = []
 
-        for group_entry in groups_map.values():
+        for group_id in sorted(groups_map):
+            group_entry = groups_map[group_id]
+            students_map = group_entry["students_map"]
 
             students = []
 
-            for student_entry in group_entry["students_map"].values():
+            for student_id in sorted(students_map):
+                student_entry = students_map[student_id]
+                indicators_map = student_entry["indicators_map"]
+
+                indicators = [
+                    indicators_map[indicator_id]
+                    for indicator_id in sorted(indicators_map)
+                ]
 
                 students.append(
                     StudentDashboardDTO(
                         studentId=student_entry["studentId"],
                         studentName=student_entry["studentName"],
-                        indicators=list(student_entry["indicators_map"].values()),
+                        indicators=indicators,
                     )
                 )
 
