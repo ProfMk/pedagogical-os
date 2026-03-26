@@ -191,3 +191,63 @@ def test_hierarchy_structure_is_correct():
     assert indicator.normalizedLevel == 4.2
 
     assert result.alerts == []
+
+def test_deterministic_ordering():
+    from uuid import uuid4
+
+    group_low = uuid4()
+    group_high = uuid4()
+    if group_low > group_high:
+        group_low, group_high = group_high, group_low
+
+    student_low = uuid4()
+    student_high = uuid4()
+    if student_low > student_high:
+        student_low, student_high = student_high, student_low
+
+    indicator_low = uuid4()
+    indicator_high = uuid4()
+    if indicator_low > indicator_high:
+        indicator_low, indicator_high = indicator_high, indicator_low
+
+    class MockRepository:
+        def get_teacher_dashboard_dataset(self, institution_id, academic_year_id):
+            return [
+                {
+                    "group_id": group_high,
+                    "group_name": "Group B",
+                    "student_id": student_high,
+                    "student_name": "Student B",
+                    "indicator_id": indicator_high,
+                    "total_stages": 6,
+                    "current_stage_order": 5,
+                    "consolidation_score": None,
+                    "normalized_level_internal": 4.7,
+                },
+                {
+                    "group_id": group_low,
+                    "group_name": "Group A",
+                    "student_id": student_low,
+                    "student_name": "Student A",
+                    "indicator_id": indicator_low,
+                    "total_stages": 3,
+                    "current_stage_order": 1,
+                    "consolidation_score": 0.1,
+                    "normalized_level_internal": 0.8,
+                },
+            ]
+
+    use_case = GetTeacherDashboardUseCase(repository=MockRepository())
+
+    result = use_case.execute(uuid4(), uuid4())
+
+    # Validate group ordering
+    assert [g.groupId for g in result.groups] == [group_low, group_high]
+
+    # Validate student ordering
+    students = result.groups[0].students
+    assert [s.studentId for s in students] == [student_low]
+
+    # Validate indicator ordering
+    indicators = students[0].indicators
+    assert [i.indicatorId for i in indicators] == [indicator_low]    
