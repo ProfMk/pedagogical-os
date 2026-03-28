@@ -5,6 +5,8 @@ from backend.application.dto.teacher_dashboard_dto import (
     IndicatorDashboardDTO,
     StudentDashboardDTO,
     TeacherDashboardResponse,
+    PeriodStateDTO,
+    TimelineContextDTO,
 )
 
 
@@ -23,9 +25,20 @@ class GetTeacherDashboardUseCase:
             academic_year_id=academic_year_id,
         )
 
+        # -----------------------------
+        # NEW — PERIOD FETCH
+        # -----------------------------
+        period_data = self.repository.get_active_academic_period(
+            academic_year_id=academic_year_id
+        )
+
         # Edge case: empty dataset
         if not dataset:
-            return TeacherDashboardResponse(groups=[], alerts=[])
+            return TeacherDashboardResponse(
+                groups=[],
+                alerts=[],
+                period=self._build_period_dto(period_data),
+            )
 
         groups_map: dict = {}
 
@@ -127,4 +140,23 @@ class GetTeacherDashboardUseCase:
         return TeacherDashboardResponse(
             groups=groups,
             alerts=[],
+            period=self._build_period_dto(period_data),
+        )
+
+    # ---------------------------------------
+    # PRIVATE HELPER — DTO MAPPING (NO BUSINESS LOGIC)
+    # ---------------------------------------
+
+    def _build_period_dto(self, period_data):
+        if period_data is None:
+            return None
+
+        return PeriodStateDTO(
+            activePeriodId=period_data["id"],
+            periodName=period_data["name"],
+            periodStatus="OPEN" if period_data["is_closed"] is False else "CLOSED",
+            timelineContext=TimelineContextDTO(
+                startDate=period_data["start_date"],
+                endDate=period_data["end_date"],
+            ),
         )

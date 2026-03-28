@@ -1,5 +1,6 @@
 from typing import List
 from uuid import UUID
+from datetime import date
 
 from pydantic import BaseModel
 
@@ -24,6 +25,23 @@ class GroupDashboardDTO(BaseModel):
     students: List[StudentDashboardDTO]
 
 
+# -----------------------------
+# NEW DTOs — PERIOD STATE
+# -----------------------------
+
+class TimelineContextDTO(BaseModel):
+    startDate: date
+    endDate: date
+
+
+class PeriodStateDTO(BaseModel):
+    activePeriodId: UUID
+    periodName: str
+    periodStatus: str
+    timelineContext: TimelineContextDTO
+
+
 class TeacherDashboardResponse(BaseModel):
     groups: List[GroupDashboardDTO]
     alerts: List
+    period: PeriodStateDTO | None = None

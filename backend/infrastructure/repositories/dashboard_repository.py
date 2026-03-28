@@ -77,10 +77,10 @@ class DashboardRepository:
                 AND tsa.is_active = true
 
             ORDER BY
-                    c.id,
-                    i.id,
-                    s.id,
-                    ist.stage_order
+                c.id,
+                i.id,
+                s.id,
+                ist.stage_order
             """
         )
 
@@ -97,3 +97,42 @@ class DashboardRepository:
         )
 
         return [dict(row) for row in rows]
+
+    # ---------------------------------------
+    # NEW METHOD — ACTIVE ACADEMIC PERIOD
+    # ---------------------------------------
+
+    def get_active_academic_period(
+        self,
+        academic_year_id: UUID,
+    ) -> dict | None:
+
+        query = text(
+            """
+            SELECT
+                ap.id,
+                ap.name,
+                ap.start_date,
+                ap.end_date,
+                ap.is_closed
+            FROM academic_period ap
+            WHERE
+                ap.academic_year_id = :academic_year_id
+                AND ap.is_closed = false
+            LIMIT 1
+            """
+        )
+
+        row = (
+            self.session.execute(
+                query,
+                {"academic_year_id": academic_year_id},
+            )
+            .mappings()
+            .first()
+        )
+
+        if row is None:
+            return None
+
+        return dict(row)
