@@ -458,7 +458,7 @@ Aggregation must occur in:
 
 Application Layer
 
-Status: In Progress
+Status: Completed
 
 ---
 
@@ -474,7 +474,7 @@ DTO:
 
 TeacherDashboardResponse
 
-Status: Pending
+Status: Completed
 
 ---
 
@@ -486,7 +486,7 @@ Dashboard must display:
 - period status
 - timeline context
 
-Status: Pending
+Status: Completed
 
 ---
 
