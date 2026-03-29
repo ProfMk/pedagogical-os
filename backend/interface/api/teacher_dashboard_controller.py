@@ -21,6 +21,7 @@ def get_dashboard_repository():
 def get_teacher_dashboard(
     institution_id: UUID,
     academic_year_id: UUID,
+    teacher_id: UUID,
     repository: DashboardRepository = Depends(get_dashboard_repository),
 ):
     use_case = GetTeacherDashboardUseCase(repository)
@@ -28,4 +29,5 @@ def get_teacher_dashboard(
     return use_case.execute(
         institution_id=institution_id,
         academic_year_id=academic_year_id,
+        institutional_user_id=teacher_id,
     )

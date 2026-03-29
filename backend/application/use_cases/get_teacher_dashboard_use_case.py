@@ -1,3 +1,4 @@
+import time
 from uuid import UUID
 
 from backend.application.dto.teacher_dashboard_dto import (
@@ -18,28 +19,57 @@ class GetTeacherDashboardUseCase:
         self,
         institution_id: UUID,
         academic_year_id: UUID,
+        institutional_user_id: UUID,
     ) -> TeacherDashboardResponse:
+
+        # -----------------------------
+        # TOTAL START
+        # -----------------------------
+        start_total = time.time()
+
+        # -----------------------------
+        # DB FETCH (MEASURED)
+        # -----------------------------
+        start_db = time.time()
 
         dataset = self.repository.get_teacher_dashboard_dataset(
             institution_id=institution_id,
             academic_year_id=academic_year_id,
+            institutional_user_id=institutional_user_id,
         )
 
-        # -----------------------------
-        # NEW — PERIOD FETCH
-        # -----------------------------
         period_data = self.repository.get_active_academic_period(
             academic_year_id=academic_year_id
         )
 
-        # Edge case: empty dataset
+        end_db = time.time()
+
+        print("DB FETCH TIME:", (end_db - start_db) * 1000, "ms")
+
+        # -----------------------------
+        # PROCESSING START
+        # -----------------------------
+        start_processing = time.time()
+
+        # -----------------------------
+        # EDGE CASE
+        # -----------------------------
         if not dataset:
+            end_processing = time.time()
+            end_total = time.time()
+
+            print("PROCESSING TIME:", (end_processing - start_processing) * 1000, "ms")
+            print("TOTAL TIME:", (end_total - start_total) * 1000, "ms")
+
             return TeacherDashboardResponse(
                 groups=[],
                 alerts=[],
                 period=self._build_period_dto(period_data),
             )
 
+        # -----------------------------
+        # AGGREGATION (UNCHANGED)
+        # -----------------------------
         groups_map: dict = {}
 
         for row in dataset:
@@ -47,7 +77,6 @@ class GetTeacherDashboardUseCase:
             student_id = row["student_id"]
             indicator_id = row["indicator_id"]
 
-            # --- GROUP ---
             group_entry = groups_map.setdefault(
                 group_id,
                 {
@@ -57,7 +86,6 @@ class GetTeacherDashboardUseCase:
                 },
             )
 
-            # --- STUDENT ---
             students_map = group_entry["students_map"]
 
             student_entry = students_map.setdefault(
@@ -69,8 +97,10 @@ class GetTeacherDashboardUseCase:
                 },
             )
 
-            # --- INDICATOR ---
             indicators_map = student_entry["indicators_map"]
+
+            if indicator_id is None:
+                continue
 
             indicator_values = {
                 "currentStage": row["current_stage_order"],
@@ -91,7 +121,6 @@ class GetTeacherDashboardUseCase:
                 )
                 continue
 
-            # --- DUPLICATE VALIDATION ---
             if (
                 existing_indicator.currentStage != indicator_values["currentStage"]
                 or existing_indicator.totalStages != indicator_values["totalStages"]
@@ -102,8 +131,9 @@ class GetTeacherDashboardUseCase:
                     "Inconsistent duplicate indicator row detected"
                 )
 
-        # --- BUILD RESPONSE (DETERMINISTIC ORDER) ---
-
+        # -----------------------------
+        # BUILD RESPONSE
+        # -----------------------------
         groups = []
 
         for group_id in sorted(groups_map):
@@ -137,6 +167,18 @@ class GetTeacherDashboardUseCase:
                 )
             )
 
+        # -----------------------------
+        # PROCESSING END
+        # -----------------------------
+        end_processing = time.time()
+        end_total = time.time()
+
+        print("PROCESSING TIME:", (end_processing - start_processing) * 1000, "ms")
+        print("TOTAL TIME:", (end_total - start_total) * 1000, "ms")
+
+        # -----------------------------
+        # RESPONSE
+        # -----------------------------
         return TeacherDashboardResponse(
             groups=groups,
             alerts=[],
@@ -144,9 +186,8 @@ class GetTeacherDashboardUseCase:
         )
 
     # ---------------------------------------
-    # PRIVATE HELPER — DTO MAPPING (NO BUSINESS LOGIC)
+    # PERIOD DTO (NO TIMING HERE)
     # ---------------------------------------
-
     def _build_period_dto(self, period_data):
         if period_data is None:
             return None

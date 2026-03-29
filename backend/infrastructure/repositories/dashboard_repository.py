@@ -13,11 +13,12 @@ class DashboardRepository:
         self,
         institution_id: UUID,
         academic_year_id: UUID,
+        institutional_user_id: UUID,
     ) -> List[dict]:
 
         query = text(
             """
-            SELECT 
+            SELECT
                 ag.id AS group_id,
                 ag.name AS group_name,
 
@@ -40,6 +41,18 @@ class DashboardRepository:
 
             FROM teacher_subject_assignment tsa
 
+            JOIN institutional_user iu
+                ON iu.id = tsa.institutional_user_id
+
+            JOIN institutional_user_role iur
+                ON iur.institutional_user_id = iu.id
+                AND iur.academic_year_id = tsa.academic_year_id
+                AND iur.is_active = true
+
+            JOIN role r
+                ON r.id = iur.role_id
+                AND r.code = 'TEACHER'
+
             JOIN subject_group sg
                 ON sg.id = tsa.subject_group_id
 
@@ -56,17 +69,17 @@ class DashboardRepository:
             JOIN student s
                 ON s.id = se.student_id
 
-            JOIN student_indicator_progress sip
+            LEFT JOIN student_indicator_progress sip
                 ON sip.student_id = s.id
                 AND sip.academic_year_id = se.academic_year_id
 
-            JOIN indicator i
+            LEFT JOIN indicator i
                 ON i.id = sip.indicator_id
 
-            JOIN competency c
+            LEFT JOIN competency c
                 ON c.id = i.competency_id
 
-            JOIN indicator_stage ist
+            LEFT JOIN indicator_stage ist
                 ON ist.indicator_id = i.id
                 AND ist.stage_order = sip.current_stage_order
 
@@ -75,31 +88,32 @@ class DashboardRepository:
                 AND ag.academic_year_id = :academic_year_id
                 AND tsa.academic_year_id = :academic_year_id
                 AND tsa.is_active = true
+                AND tsa.institutional_user_id = :institutional_user_id
 
             ORDER BY
-                c.id,
-                i.id,
+                c.id NULLS LAST,
+                i.id NULLS LAST,
                 s.id,
-                ist.stage_order
+                ist.stage_order NULLS LAST;
             """
         )
 
-        rows = (
-            self.session.execute(
-                query,
-                {
-                    "institution_id": institution_id,
-                    "academic_year_id": academic_year_id,
-                },
-            )
-            .mappings()
-            .all()
+        result = self.session.execute(
+            query,
+            {
+                "institution_id": institution_id,
+                "academic_year_id": academic_year_id,
+                "institutional_user_id": institutional_user_id,
+            },
         )
 
-        return [dict(row) for row in rows]
+        # 🔥 OPTIMIZACIÓN CRÍTICA
+        rows = result.mappings().all()
+
+        return rows  # ← YA SON dict-like, NO convertir
 
     # ---------------------------------------
-    # NEW METHOD — ACTIVE ACADEMIC PERIOD
+    # ACTIVE ACADEMIC PERIOD
     # ---------------------------------------
 
     def get_active_academic_period(
@@ -123,16 +137,14 @@ class DashboardRepository:
             """
         )
 
-        row = (
-            self.session.execute(
-                query,
-                {"academic_year_id": academic_year_id},
-            )
-            .mappings()
-            .first()
+        result = self.session.execute(
+            query,
+            {"academic_year_id": academic_year_id},
         )
+
+        row = result.mappings().first()
 
         if row is None:
             return None
 
-        return dict(row)
+        return row  # ← también evitar dict(row)
