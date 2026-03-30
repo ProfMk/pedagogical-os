@@ -5,6 +5,7 @@ from backend.interface.api.dashboard import router as dashboard_router
 from backend.interface.api.indicator_result import router as indicator_result_router
 from backend.interface.api.teacher_navigation_router import router as teacher_navigation_router
 from backend.interface.api.teacher_dashboard_controller import router as teacher_dashboard_router
+from backend.interface.api.routes.teacher_student_detail import router as teacher_student_detail_router
 
 
 def create_app() -> FastAPI:
@@ -24,6 +25,7 @@ def create_app() -> FastAPI:
     app.include_router(indicator_result_router)
     app.include_router(teacher_navigation_router, prefix="/teacher")
     app.include_router(teacher_dashboard_router)
+    app.include_router(teacher_student_detail_router)
 
     return app
 
