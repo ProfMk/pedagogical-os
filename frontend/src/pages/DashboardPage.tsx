@@ -24,6 +24,18 @@ export const DashboardPage = (): JSX.Element => {
           Open Teacher Dashboard
         </button>
 
+        <button
+          onClick={() => navigate('/teacher/group-progress')}
+          style={{
+            padding: '10px 16px',
+            marginTop: 12,
+            marginLeft: 8,
+            cursor: 'pointer'
+          }}
+        >
+          View Group Progress
+        </button>
+
         {loading && <p>Loading dashboard data...</p>}
         {error && <p>{error}</p>}
         {data && <p>API summary: {data.summary}</p>}

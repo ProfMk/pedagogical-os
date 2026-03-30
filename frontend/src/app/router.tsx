@@ -4,6 +4,7 @@ import { DashboardPage } from '../pages/DashboardPage';
 import { GroupPage } from '../pages/GroupPage';
 import { IndicatorPage } from '../pages/IndicatorPage';
 import { StudentPage } from '../pages/StudentPage';
+import TeacherGroupProgressPage from '../pages/TeacherGroupProgressPage';
 
 export const router = createBrowserRouter([
   {
@@ -29,5 +30,9 @@ export const router = createBrowserRouter([
   {
     path: '/teacher/dashboard',
     element: <TeacherDashboardPage />
+  },
+  {
+    path: '/teacher/group-progress',
+    element: <TeacherGroupProgressPage />
   }
 ]);
