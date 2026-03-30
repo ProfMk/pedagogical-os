@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { getTeacherDashboard } from '../api/teacherDashboardApi';
 import { TeacherDashboardResponse } from '../types/teacherDashboard';
 
-const INSTITUTION_ID = '11111111-1111-1111-1111-111111111111';
-const ACADEMIC_YEAR_ID = '22222222-2222-2222-2222-222222222222';
-const TEACHER_ID = '33333333-3333-3333-3333-333333333333';
+const INSTITUTION_ID = 'b1c31b99-f597-48fb-af2d-ad8fcbddc9bb';
+const ACADEMIC_YEAR_ID = 'd3d61e45-e5a7-4f22-9860-811e73201326';
+const TEACHER_ID = '11111111-1111-1111-1111-111111111111';
 
 export function useTeacherDashboard(): {
   data: TeacherDashboardResponse | null;
