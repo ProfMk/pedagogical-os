@@ -93,4 +93,13 @@ class TeacherGroupProgressRepository(TeacherGroupProgressRepositoryPort):
             },
         )
 
-        return list(result.mappings().all())
+        rows = result.mappings().all()
+
+        return [
+            {
+                **row,
+                "stage_average": float(row["stage_average"]) if row["stage_average"] is not None else 0.0,
+                "consolidation_average": float(row["consolidation_average"]) if row["consolidation_average"] is not None else 0.0,
+            }
+            for row in rows
+        ]
