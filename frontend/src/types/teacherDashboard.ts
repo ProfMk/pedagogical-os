@@ -1,32 +1,25 @@
-export interface IndicatorProgress {
+export interface Indicator {
   indicatorId: string;
-  indicatorName: string;
-  microStageName: string;
   currentStage: number;
   totalStages: number;
-  consolidation: number;
-  normalizedLevel: number;
+  consolidation: number | null;
+  normalizedLevel: number | null;
 }
 
-export interface StudentDashboard {
+export interface Student {
   studentId: string;
   studentName: string;
-  indicators: IndicatorProgress[];
+  indicators: Indicator[];
 }
 
-export interface GroupDashboard {
+export interface Group {
   groupId: string;
   groupName: string;
-  students: StudentDashboard[];
-}
-
-export interface DashboardAlert {
-  indicatorId: string;
-  alertType: string;
-  affectedStudents: number;
+  students: Student[];
 }
 
 export interface TeacherDashboardResponse {
-  groups: GroupDashboard[];
-  alerts: DashboardAlert[];
+  groups: Group[];
+  alerts: unknown[];
+  period?: unknown;
 }

@@ -1,54 +1,29 @@
-import { useTeacherDashboard } from "../hooks/useTeacherDashboard";
+import GroupNode from '../components/teacher-dashboard/GroupNode';
+import { useTeacherDashboard } from '../hooks/useTeacherDashboard';
 
 const TeacherDashboardPage = (): JSX.Element => {
   const { data, loading, error } = useTeacherDashboard();
 
-  if (loading) return <div>Loading dashboard...</div>;
-  if (error) return <div>{error}</div>;
-  if (!data) return <div>No data</div>;
+  if (loading) {
+    return <div>Loading dashboard...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!data || data.groups.length === 0) {
+    return <div>No groups available.</div>;
+  }
 
   return (
     <div>
       <h1>Teacher Dashboard</h1>
-
-      {data.groups?.map((group) => (
-        <div key={group.groupId}>
-          <h2>{group.groupName}</h2>
-
-          {group.students?.map((student) => (
-            <div key={student.studentId}>
-              <h3>{student.studentName}</h3>
-
-              {student.indicators?.map((indicator, idx) => (
-                <div key={indicator.indicatorId + "-" + idx}>
-
-                  <div>
-                    <strong>{(indicator as any).competencyName}</strong>
-                  </div>
-
-                  <div>
-                    <strong>{indicator.indicatorName}</strong>
-                  </div>
-
-                  <div>
-                    {indicator.microStageName}
-                  </div>
-
-                  <div>
-                    Stage {indicator.currentStage}/{indicator.totalStages} — 
-                    Consolidation: {indicator.consolidation}
-                  </div>
-
-                  <br/>
-
-                </div>
-              ))}
-
-            </div>
-          ))}
-
-        </div>
-      ))}
+      <ul>
+        {data.groups.map((group) => (
+          <GroupNode key={group.groupId} group={group} />
+        ))}
+      </ul>
     </div>
   );
 };
