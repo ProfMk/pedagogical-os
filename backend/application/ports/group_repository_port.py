@@ -10,6 +10,8 @@ class GroupRepositoryPort(ABC):
     @abstractmethod
     def get_groups_for_teacher(
         self,
-        teacher_id: UUID
+        institution_id: UUID,
+        academic_year_id: UUID,
+        teacher_id: UUID,
     ) -> List[TeacherGroupDTO]:
         pass

@@ -15,33 +15,47 @@ class GroupRepository(GroupRepositoryPort):
 
     def get_groups_for_teacher(
         self,
-        teacher_id: UUID
+        institution_id: UUID,
+        academic_year_id: UUID,
+        teacher_id: UUID,
     ) -> List[TeacherGroupDTO]:
 
         query = text(
             """
-            SELECT
-                sg.id,
-                sg.name,
-                sg.subject_id,
-                sg.academic_year_id
+            SELECT DISTINCT
+                ag.id AS group_id,
+                ag.name AS group_name,
+                sg.subject_id AS subject_id,
+                ag.academic_year_id AS academic_year_id
             FROM teacher_subject_assignment tsa
             JOIN subject_group sg
                 ON sg.id = tsa.subject_group_id
+            JOIN academic_group ag
+                ON ag.id = sg.academic_group_id
+            JOIN academic_year ay
+                ON ay.id = ag.academic_year_id
             WHERE tsa.institutional_user_id = :teacher_id
+                AND tsa.academic_year_id = :academic_year_id
                 AND tsa.is_active = TRUE
+                AND ag.academic_year_id = :academic_year_id
+                AND ay.institution_id = :institution_id
+            ORDER BY ag.name, sg.subject_id
             """
         )
 
         rows = self.session.execute(
             query,
-            {"teacher_id": teacher_id}
+            {
+                "teacher_id": teacher_id,
+                "academic_year_id": academic_year_id,
+                "institution_id": institution_id,
+            },
         ).mappings().all()
 
         return [
             TeacherGroupDTO(
-                id=row["id"],
-                name=row["name"],
+                id=row["group_id"],
+                name=row["group_name"],
                 subject_id=row["subject_id"],
                 academic_year_id=row["academic_year_id"],
             )

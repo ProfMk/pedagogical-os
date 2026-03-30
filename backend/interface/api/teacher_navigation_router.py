@@ -2,9 +2,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-from backend.application.dto.group_student_dto import GroupStudentDTO
-from backend.application.dto.student_indicator_dto import StudentIndicatorDTO
-from backend.application.dto.teacher_group_dto import TeacherGroupDTO
 from backend.application.use_cases.get_group_students_use_case import (
     GetGroupStudentsUseCase,
 )
@@ -40,9 +37,15 @@ def get_student_indicators_use_case(session=Depends(get_session)):
 @router.get("/groups")
 def get_groups(
     teacher_id: UUID,
+    institution_id: UUID,
+    academic_year_id: UUID,
     use_case: GetTeacherGroupsUseCase = Depends(get_teacher_groups_use_case),
 ):
-    return use_case.execute(teacher_id=teacher_id)
+    return use_case.execute(
+        teacher_id=teacher_id,
+        institution_id=institution_id,
+        academic_year_id=academic_year_id,
+    )
 
 
 @router.get("/groups/{group_id}/students")
