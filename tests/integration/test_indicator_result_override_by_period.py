@@ -25,17 +25,19 @@ def test_override_indicator_result_by_period(test_db_session):
     student_id = uuid.uuid4()
     indicator_id = uuid.uuid4()
 
+    from datetime import date
+
     academic_period = AcademicPeriodORM(
-        id=academic_period_id,
-        academic_year_id=academic_year_id,
-        code="P1",
-        name="Period 1",
-        sequence=1,
-        weight=Decimal("0.50"),
-        is_closed=False,
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
-    )
+    id=academic_period_id,
+    academic_year_id=academic_year_id,
+    name="Period 1",
+    start_date=date(2026, 1, 1),
+    end_date=date(2026, 3, 31),
+    is_closed=False,
+    created_at=datetime.utcnow(),
+    updated_at=datetime.utcnow(),
+)
+    
     academic_period_repository.save(academic_period)
 
     # Create initial result

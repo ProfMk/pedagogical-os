@@ -27,7 +27,10 @@ class OverrideIndicatorResultUseCase:
 
         academic_period = self._academic_period_repository.get_by_id(academic_period_id)
 
-        if academic_period is not None and academic_period.is_closed is True:
+        if academic_period is None:
+            raise AcademicPeriodError("Academic period not found")
+
+        if academic_period.is_closed:
             raise AcademicPeriodError("Cannot override: academic period is closed")
 
         result = self._repository.get_by_scope(
