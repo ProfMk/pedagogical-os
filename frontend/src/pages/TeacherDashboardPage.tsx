@@ -18,6 +18,9 @@ const TeacherDashboardPage = (): JSX.Element => {
 
   return (
     <div>
+      <div style={{ marginBottom: 16 }}>
+        <a href="/dashboard">← Back to Dashboard</a>
+      </div>
       <h1>Teacher Dashboard</h1>
       <ul>
         {data.groups.map((group) => (

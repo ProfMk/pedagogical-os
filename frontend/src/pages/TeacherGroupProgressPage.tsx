@@ -10,6 +10,7 @@ type TeacherGroup = {
   id: string;
   name: string;
   subject_id: string;
+  subject_name: string; // ✅ FIX
   academic_year_id: string;
 };
 
@@ -50,7 +51,9 @@ const TeacherGroupProgressPage = (): JSX.Element => {
   useEffect(() => {
     async function loadGroups(): Promise<void> {
       try {
-        const data = await apiGet<TeacherGroup[]>(`/teacher/groups?teacher_id=${TEACHER_ID}`);
+        const data = await apiGet<TeacherGroup[]>(
+          `/teacher/groups?teacher_id=${TEACHER_ID}&institution_id=${INSTITUTION_ID}&academic_year_id=${ACADEMIC_YEAR_ID}`
+        );
         setGroups(data);
       } catch {
         setError('Failed to load groups');
@@ -60,8 +63,19 @@ const TeacherGroupProgressPage = (): JSX.Element => {
     void loadGroups();
   }, []);
 
+  // ✅ FIX COMPLETO
   const subjectOptions = useMemo(() => {
-    return Array.from(new Set(groups.map((group) => group.subject_id)));
+    return Array.from(
+      new Map(
+        groups.map((group) => [
+          group.subject_id,
+          {
+            id: group.subject_id,
+            name: group.subject_name,
+          },
+        ])
+      ).values()
+    );
   }, [groups]);
 
   const groupOptions = useMemo(() => {
@@ -99,6 +113,9 @@ const TeacherGroupProgressPage = (): JSX.Element => {
 
   return (
     <main style={{ maxWidth: 960, margin: '0 auto', padding: 24 }}>
+      <div style={{ marginBottom: 16 }}>
+        <a href="/dashboard">← Back to Dashboard</a>
+      </div>
       <h1>Teacher Group Progress</h1>
 
       <div>
@@ -109,9 +126,9 @@ const TeacherGroupProgressPage = (): JSX.Element => {
           onChange={(event) => setSelectedSubjectId(event.target.value)}
         >
           <option value="">Select a subject</option>
-          {subjectOptions.map((subjectId) => (
-            <option key={subjectId} value={subjectId}>
-              {subjectId}
+          {subjectOptions.map((subject) => (
+            <option key={subject.id} value={subject.id}>
+              {subject.name}
             </option>
           ))}
         </select>
