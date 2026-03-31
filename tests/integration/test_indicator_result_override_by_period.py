@@ -9,16 +9,34 @@ from backend.infrastructure.repositories.indicator_result_repository_orm import 
 from backend.application.use_cases.override_indicator_result import (
     OverrideIndicatorResultUseCase,
 )
+from backend.infrastructure.repositories.academic_period_repository_orm import (
+    AcademicPeriodRepositoryORM,
+)
+from backend.infrastructure.orm.academic_period_orm import AcademicPeriodORM
 
 
 def test_override_indicator_result_by_period(test_db_session):
 
     repository = IndicatorResultRepositoryORM(test_db_session)
+    academic_period_repository = AcademicPeriodRepositoryORM(test_db_session)
 
     academic_year_id = uuid.uuid4()
     academic_period_id = uuid.uuid4()
     student_id = uuid.uuid4()
     indicator_id = uuid.uuid4()
+
+    academic_period = AcademicPeriodORM(
+        id=academic_period_id,
+        academic_year_id=academic_year_id,
+        code="P1",
+        name="Period 1",
+        sequence=1,
+        weight=Decimal("0.50"),
+        is_closed=False,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+    )
+    academic_period_repository.save(academic_period)
 
     # Create initial result
     result = IndicatorResult(
@@ -39,7 +57,7 @@ def test_override_indicator_result_by_period(test_db_session):
     repository.save(result)
 
     # Execute override
-    use_case = OverrideIndicatorResultUseCase(repository)
+    use_case = OverrideIndicatorResultUseCase(repository, academic_period_repository)
 
     use_case.execute(
         academic_period_id=academic_period_id,

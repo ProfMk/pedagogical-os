@@ -11,6 +11,23 @@ from backend.application.use_cases.override_indicator_result import (
 from backend.domain.entities.indicator_result import IndicatorResult
 
 
+
+
+class FakeAcademicPeriod:
+
+    def __init__(self, is_closed: bool):
+        self.is_closed = is_closed
+
+
+class FakeAcademicPeriodRepository:
+
+    def __init__(self, period):
+        self.period = period
+
+    def get_by_id(self, academic_period_id):
+        return self.period
+
+
 class FakeRepository:
     """
     In-memory fake repository used for Application layer tests.
@@ -91,7 +108,7 @@ def test_full_override_and_read_flow():
 
     repo = FakeRepository(result)
 
-    override_use_case = OverrideIndicatorResultUseCase(repo)
+    override_use_case = OverrideIndicatorResultUseCase(repo, FakeAcademicPeriodRepository(FakeAcademicPeriod(is_closed=False)))
     read_use_case = GetIndicatorResultUseCase(repo)
 
     # Step 1: Apply override
