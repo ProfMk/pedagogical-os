@@ -14,14 +14,27 @@ export const DashboardPage = (): JSX.Element => {
         <p>Dashboard overview placeholder.</p>
 
         <button
+          onClick={() => navigate('/teacher/dashboard-full-year')}
+          style={{
+            padding: '10px 16px',
+            marginTop: 12,
+            marginLeft: 8,
+            cursor: 'pointer'
+          }}
+        >
+          Full Year Dashboard
+        </button>
+
+        <button
           onClick={() => navigate('/teacher/dashboard')}
           style={{
             padding: '10px 16px',
             marginTop: 12,
+            marginLeft: 8,
             cursor: 'pointer'
           }}
         >
-          Open Teacher Dashboard
+          Open Student Detail
         </button>
 
         <button
