@@ -5,6 +5,9 @@ import { GroupPage } from '../pages/GroupPage';
 import { IndicatorPage } from '../pages/IndicatorPage';
 import { StudentPage } from '../pages/StudentPage';
 import TeacherGroupProgressPage from '../pages/TeacherGroupProgressPage';
+import TeacherDashboardFullYearPage from '../pages/TeacherDashboardFullYearPage';
+import TeacherDashboardFullYearGroupPage from '../pages/TeacherDashboardFullYearGroupPage';
+import TeacherDashboardFullYearStudentPage from '../pages/TeacherDashboardFullYearStudentPage';
 
 export const router = createBrowserRouter([
   {
@@ -34,5 +37,17 @@ export const router = createBrowserRouter([
   {
     path: '/teacher/group-progress',
     element: <TeacherGroupProgressPage />
+  },
+  {
+    path: '/teacher/dashboard-full-year',
+    element: <TeacherDashboardFullYearPage />
+  },
+  {
+    path: '/teacher/dashboard-full-year/group',
+    element: <TeacherDashboardFullYearGroupPage />
+  },
+  {
+    path: '/teacher/dashboard-full-year/student',
+    element: <TeacherDashboardFullYearStudentPage />
   }
 ]);

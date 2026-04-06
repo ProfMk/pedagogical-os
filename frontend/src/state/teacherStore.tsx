@@ -1,33 +1,49 @@
 import { createContext, PropsWithChildren, useContext, useMemo, useState } from 'react';
 
-import { AcademicPeriod, StudentId, SubjectGroupId } from '../types/domainTypes';
-
 type TeacherStoreState = {
-  selectedSubjectGroup: SubjectGroupId | null;
-  selectedStudent: StudentId | null;
-  currentAcademicPeriod: AcademicPeriod | null;
-  setSelectedSubjectGroup: (groupId: SubjectGroupId | null) => void;
-  setSelectedStudent: (studentId: StudentId | null) => void;
-  setCurrentAcademicPeriod: (period: AcademicPeriod | null) => void;
+  subjectId: string | null;
+  groupId: string | null;
+  academicPeriodId: string | null;
+  setSubjectId: (subjectId: string | null) => void;
+  setGroupId: (groupId: string | null) => void;
+  setAcademicPeriodId: (periodId: string | null) => void;
+  setSubject: (subjectId: string) => void;
+  setGroup: (groupId: string) => void;
+  setPeriod: (periodId: string) => void;
 };
 
 const TeacherStoreContext = createContext<TeacherStoreState | undefined>(undefined);
 
 export const TeacherStoreProvider = ({ children }: PropsWithChildren): JSX.Element => {
-  const [selectedSubjectGroup, setSelectedSubjectGroup] = useState<SubjectGroupId | null>(null);
-  const [selectedStudent, setSelectedStudent] = useState<StudentId | null>(null);
-  const [currentAcademicPeriod, setCurrentAcademicPeriod] = useState<AcademicPeriod | null>(null);
+  const [subjectId, setSubjectId] = useState<string | null>(null);
+  const [groupId, setGroupId] = useState<string | null>(null);
+  const [academicPeriodId, setAcademicPeriodId] = useState<string | null>(null);
+  const setSubject = (nextSubjectId: string): void => {
+    setSubjectId(nextSubjectId);
+    setGroupId(null);
+    setAcademicPeriodId(null);
+  };
+  const setGroup = (nextGroupId: string): void => {
+    setGroupId(nextGroupId);
+    setAcademicPeriodId(null);
+  };
+  const setPeriod = (nextPeriodId: string): void => {
+    setAcademicPeriodId(nextPeriodId);
+  };
 
   const value = useMemo(
     () => ({
-      selectedSubjectGroup,
-      selectedStudent,
-      currentAcademicPeriod,
-      setSelectedSubjectGroup,
-      setSelectedStudent,
-      setCurrentAcademicPeriod
+      subjectId,
+      groupId,
+      academicPeriodId,
+      setSubjectId,
+      setGroupId,
+      setAcademicPeriodId,
+      setSubject,
+      setGroup,
+      setPeriod
     }),
-    [selectedSubjectGroup, selectedStudent, currentAcademicPeriod]
+    [subjectId, groupId, academicPeriodId]
   );
 
   return <TeacherStoreContext.Provider value={value}>{children}</TeacherStoreContext.Provider>;
