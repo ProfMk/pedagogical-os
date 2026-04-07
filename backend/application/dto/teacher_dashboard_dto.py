@@ -1,8 +1,8 @@
+from datetime import date
 from typing import List
 from uuid import UUID
-from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class IndicatorDashboardDTO(BaseModel):
@@ -13,10 +13,27 @@ class IndicatorDashboardDTO(BaseModel):
     normalizedLevel: float | None
 
 
+class CompetenceDashboardDTO(BaseModel):
+    competenceId: UUID
+    competenceName: str
+    indicators: List[IndicatorDashboardDTO]
+    averageNormalizedLevel: float | None = None
+    indicatorCount: int = 0
+
+
+class NucleusDashboardDTO(BaseModel):
+    nucleusId: UUID
+    nucleusName: str
+    competences: List[CompetenceDashboardDTO]
+    averageNormalizedLevel: float | None = None
+    competenceCount: int = 0
+
+
 class StudentDashboardDTO(BaseModel):
     studentId: UUID
     studentName: str | None
-    indicators: List[IndicatorDashboardDTO]
+    indicators: List[IndicatorDashboardDTO] = Field(default_factory=list)
+    nucleus: List[NucleusDashboardDTO] = Field(default_factory=list)
 
 
 class GroupDashboardDTO(BaseModel):
@@ -24,10 +41,6 @@ class GroupDashboardDTO(BaseModel):
     groupName: str
     students: List[StudentDashboardDTO]
 
-
-# -----------------------------
-# NEW DTOs — PERIOD STATE
-# -----------------------------
 
 class TimelineContextDTO(BaseModel):
     startDate: date

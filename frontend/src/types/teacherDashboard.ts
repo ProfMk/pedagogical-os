@@ -6,10 +6,27 @@ export interface Indicator {
   normalizedLevel: number | null;
 }
 
+export type Competence = {
+  competenceId: string;
+  competenceName: string;
+  indicators: Indicator[];
+  averageNormalizedLevel: number | null;
+  indicatorCount: number;
+};
+
+export type Nucleus = {
+  nucleusId: string;
+  nucleusName: string;
+  competences: Competence[];
+  averageNormalizedLevel: number | null;
+  competenceCount: number;
+};
+
 export interface Student {
   studentId: string;
   studentName: string;
   indicators: Indicator[];
+  nucleus: Nucleus[];
 }
 
 export interface Group {

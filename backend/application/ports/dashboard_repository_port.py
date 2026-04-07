@@ -11,3 +11,12 @@ class DashboardRepositoryPort(ABC):
         academic_year_id: UUID,
     ):
         pass
+
+    @abstractmethod
+    def get_full_year_student_progress_flat(
+        self,
+        institution_id: UUID,
+        academic_year_id: UUID,
+        teacher_id: UUID,
+    ):
+        pass

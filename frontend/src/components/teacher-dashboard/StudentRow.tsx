@@ -1,5 +1,7 @@
-import IndicatorNode from './IndicatorNode';
+import { memo, useMemo } from 'react';
+
 import { Student } from '../../types/teacherDashboard';
+import NucleusBlock from './NucleusBlock';
 
 type Props = {
   student: Student;
@@ -8,9 +10,16 @@ type Props = {
 };
 
 const StudentRow = ({ student, isOpen, onToggle }: Props): JSX.Element => {
+  const nucleusBlocks = useMemo(
+    () =>
+      student.nucleus.map((nucleus) => (
+        <NucleusBlock key={nucleus.nucleusId} nucleus={nucleus} defaultOpen />
+      )),
+    [student.nucleus]
+  );
+
   return (
     <li style={{ marginBottom: 16 }}>
-      {/* STICKY HEADER */}
       <div
         onClick={onToggle}
         style={{
@@ -28,28 +37,17 @@ const StudentRow = ({ student, isOpen, onToggle }: Props): JSX.Element => {
         {isOpen ? '▼' : '▶'} {student.studentName}
       </div>
 
-      {/* EXPANSION FIXED */}
       <div
         style={{
-          maxHeight: isOpen ? 1000 : 0,
+          maxHeight: isOpen ? 4000 : 0,
           overflow: 'hidden',
           transition: 'max-height 0.25s ease'
         }}
       >
-        {/* LAZY RENDER REAL */}
-        {isOpen && (
-          <ul style={{ marginTop: 8 }}>
-            {student.indicators.map((indicator) => (
-              <IndicatorNode
-                key={indicator.indicatorId}
-                indicator={indicator}
-              />
-            ))}
-          </ul>
-        )}
+        {isOpen && <div style={{ marginTop: 8 }}>{nucleusBlocks}</div>}
       </div>
     </li>
   );
 };
 
-export default StudentRow;
+export default memo(StudentRow);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Student } from '../../types/teacherDashboard';
-import IndicatorNode from './IndicatorNode';
+import NucleusBlock from './NucleusBlock';
 
 type StudentNodeProps = {
   student: Student;
@@ -17,11 +17,11 @@ const StudentNode = ({ student }: StudentNodeProps): JSX.Element => {
       </button>
 
       {isExpanded && (
-        <ul>
-          {student.indicators.map((indicator) => (
-            <IndicatorNode key={indicator.indicatorId} indicator={indicator} />
+        <div style={{ marginTop: 8 }}>
+          {student.nucleus.map((nucleus) => (
+            <NucleusBlock key={nucleus.nucleusId} nucleus={nucleus} defaultOpen />
           ))}
-        </ul>
+        </div>
       )}
     </li>
   );
