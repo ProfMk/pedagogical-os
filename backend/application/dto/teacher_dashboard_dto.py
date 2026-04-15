@@ -1,12 +1,13 @@
 from typing import List
-from uuid import UUID
 from datetime import date
+from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class IndicatorDashboardDTO(BaseModel):
-    indicatorId: UUID
+    indicator_id: UUID = Field(exclude=True)
+    indicator_description: str
     currentStage: int
     totalStages: int
     consolidation: float | None

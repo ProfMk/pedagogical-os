@@ -38,6 +38,7 @@ class GetTeacherDashboardFullYearUseCase:
             group_id = row["group_id"]
             student_id = row["student_id"]
             indicator_id = row["indicator_id"]
+            indicator_description = row["indicator_description"]
 
             group_entry = groups_map.setdefault(
                 group_id,
@@ -57,14 +58,15 @@ class GetTeacherDashboardFullYearUseCase:
                 },
             )
 
-            if indicator_id is None:
+            if indicator_id is None or indicator_description is None:
                 continue
 
             indicators_map = student_entry["indicators_map"]
 
             if indicator_id not in indicators_map:
                 indicators_map[indicator_id] = {
-                    "indicatorId": indicator_id,
+                    "indicator_id": indicator_id,
+                    "indicator_description": indicator_description,
                     "currentStage": row["current_stage_order"],
                     "totalStages": row["total_stages"],
                     "consolidation": row["consolidation_score"],

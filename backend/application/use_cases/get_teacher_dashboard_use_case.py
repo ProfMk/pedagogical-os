@@ -76,6 +76,7 @@ class GetTeacherDashboardUseCase:
             group_id = row["group_id"]
             student_id = row["student_id"]
             indicator_id = row["indicator_id"]
+            indicator_description = row["indicator_description"]
 
             group_entry = groups_map.setdefault(
                 group_id,
@@ -99,7 +100,7 @@ class GetTeacherDashboardUseCase:
 
             indicators_map = student_entry["indicators_map"]
 
-            if indicator_id is None:
+            if indicator_id is None or indicator_description is None:
                 continue
 
             indicator_values = {
@@ -113,7 +114,8 @@ class GetTeacherDashboardUseCase:
 
             if existing_indicator is None:
                 indicators_map[indicator_id] = IndicatorDashboardDTO(
-                    indicatorId=indicator_id,
+                    indicator_id=indicator_id,
+                    indicator_description=indicator_description,
                     currentStage=indicator_values["currentStage"],
                     totalStages=indicator_values["totalStages"],
                     consolidation=indicator_values["consolidation"],
