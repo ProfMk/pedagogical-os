@@ -28,7 +28,7 @@ class DashboardRepository:
                 c.description AS competency_name,
 
                 i.id AS indicator_id,
-                i.description AS indicator_name,
+                i.description AS indicator_description,
 
                 ist.description AS micro_stage_name,
                 ist.stage_order AS stage_order,
@@ -73,7 +73,7 @@ class DashboardRepository:
                 ON sip.student_id = s.id
                 AND sip.academic_year_id = se.academic_year_id
 
-            LEFT JOIN indicator i
+            JOIN public.indicator i
                 ON i.id = sip.indicator_id
 
             LEFT JOIN competency c
